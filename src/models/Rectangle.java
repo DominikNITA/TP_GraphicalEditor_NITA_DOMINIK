@@ -39,14 +39,19 @@ public class Rectangle extends Shape {
     }
 
     @Override
-    public void setxEnding(double xEnding) {
-        super.setxEnding(xEnding);
-        setWidth(Math.abs(getxEnding()-getxStarting()));
+    public void setXEnding(double xEnding) {
+        super.setXEnding(xEnding);
+        setWidth(Math.abs(getXEnding()- getXStarting()));
     }
 
     @Override
-    public void setyEnding(double yEnding) {
-        super.setyEnding(yEnding);
-        setHeight(Math.abs(getyEnding()-getyStarting()));
+    public void setYEnding(double yEnding) {
+        super.setYEnding(yEnding);
+        setHeight(Math.abs(getYEnding()- getYStarting()));
+    }
+
+    @Override
+    public Object clone() {
+        return new Rectangle(getXStarting(), getYStarting(), getXEnding(), getYEnding(), getFillColor());
     }
 }

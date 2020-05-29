@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 
-public class Shape {
+public class Shape implements Cloneable {
     protected DoubleProperty xStarting;
     protected DoubleProperty yStarting;
     protected DoubleProperty xEnding;
@@ -14,6 +14,8 @@ public class Shape {
     protected ObjectProperty<Color> fillColor;
     protected DoubleProperty strokeWidth;
     protected ObjectProperty<Color> strokeColor;
+
+    public int id;
 
     public Shape(double xStarting, double yStarting, double xEnding, double yEnding, Color fillColor) {
         this.xStarting = new SimpleDoubleProperty(xStarting);
@@ -31,7 +33,7 @@ public class Shape {
         setStrokeColor(Color.YELLOW);
     }
 
-    public void changeStyleForUnSelected(){
+    public void changeStyleForUnSelected() {
         setStrokeWidth(2);
         setStrokeColor(Color.BLACK);
     }
@@ -64,7 +66,7 @@ public class Shape {
         this.strokeColor.set(strokeColor);
     }
 
-    public double getxStarting() {
+    public double getXStarting() {
         return xStarting.get();
     }
 
@@ -72,7 +74,7 @@ public class Shape {
         return xStarting;
     }
 
-    public double getyStarting() {
+    public double getYStarting() {
         return yStarting.get();
     }
 
@@ -80,7 +82,7 @@ public class Shape {
         return yStarting;
     }
 
-    public double getxEnding() {
+    public double getXEnding() {
         return xEnding.get();
     }
 
@@ -88,7 +90,7 @@ public class Shape {
         return xEnding;
     }
 
-    public double getyEnding() {
+    public double getYEnding() {
         return yEnding.get();
     }
 
@@ -96,19 +98,19 @@ public class Shape {
         return yEnding;
     }
 
-    public void setxStarting(double xStarting) {
+    public void setXStarting(double xStarting) {
         this.xStarting.set(xStarting);
     }
 
-    public void setyStarting(double yStarting) {
+    public void setYStarting(double yStarting) {
         this.yStarting.set(yStarting);
     }
 
-    public void setxEnding(double xEnding) {
+    public void setXEnding(double xEnding) {
         this.xEnding.set(xEnding);
     }
 
-    public void setyEnding(double yEnding) {
+    public void setYEnding(double yEnding) {
         this.yEnding.set(yEnding);
     }
 
@@ -118,5 +120,9 @@ public class Shape {
 
     public ObjectProperty<Color> fillColorProperty() {
         return fillColor;
+    }
+
+    public Object clone() {
+        return new Shape(getXStarting(), getYStarting(), getXEnding(), getYEnding(), getFillColor());
     }
 }

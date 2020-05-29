@@ -10,6 +10,7 @@ public class Drawing {
     }
 
     public void addShape(Shape shape){
+        shape.id = shapes.size()-1;
         shapes.add(shape);
     }
 
@@ -21,5 +22,9 @@ public class Drawing {
         for (Shape shape: shapes){
             shape.changeStyleForUnSelected();
         }
+    }
+
+    public ObservableList<Shape> getShapes() {
+        return shapes;
     }
 }

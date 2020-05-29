@@ -17,4 +17,9 @@ public class Line extends Shape{
     public void changeStyleForUnSelected() {
         setStrokeWidth(3);
     }
+
+    @Override
+    public Object clone() {
+        return new Line(getXStarting(), getYStarting(), getXEnding(), getYEnding(), getFillColor());
+    }
 }
