@@ -41,12 +41,12 @@ public class Rectangle extends Shape {
     @Override
     public void setxEnding(double xEnding) {
         super.setxEnding(xEnding);
-        setWidth(getxEnding()-getxStarting());
+        setWidth(Math.abs(getxEnding()-getxStarting()));
     }
 
     @Override
     public void setyEnding(double yEnding) {
         super.setyEnding(yEnding);
-        setHeight(getyEnding()-getyStarting());
+        setHeight(Math.abs(getyEnding()-getyStarting()));
     }
 }
