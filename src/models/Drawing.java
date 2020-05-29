@@ -16,4 +16,10 @@ public class Drawing {
     public void removeShape(Shape shape){
         shapes.remove(shape);
     }
+
+    public void setAllShapesStylesToUnselected(){
+        for (Shape shape: shapes){
+            shape.changeStyleForUnSelected();
+        }
+    }
 }

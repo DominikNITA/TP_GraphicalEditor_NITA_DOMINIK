@@ -12,6 +12,8 @@ public class Shape {
     protected DoubleProperty xEnding;
     protected DoubleProperty yEnding;
     protected ObjectProperty<Color> fillColor;
+    protected DoubleProperty strokeWidth;
+    protected ObjectProperty<Color> strokeColor;
 
     public Shape(double xStarting, double yStarting, double xEnding, double yEnding, Color fillColor) {
         this.xStarting = new SimpleDoubleProperty(xStarting);
@@ -19,6 +21,47 @@ public class Shape {
         this.xEnding = new SimpleDoubleProperty(xEnding);
         this.yEnding = new SimpleDoubleProperty(yEnding);
         this.fillColor = new SimpleObjectProperty<>(fillColor);
+        strokeWidth = new SimpleDoubleProperty(0);
+        strokeColor = new SimpleObjectProperty<>(Color.BLACK);
+        changeStyleForUnSelected();
+    }
+
+    public void changeStyleForSelected() {
+        setStrokeWidth(3);
+        setStrokeColor(Color.YELLOW);
+    }
+
+    public void changeStyleForUnSelected(){
+        setStrokeWidth(2);
+        setStrokeColor(Color.BLACK);
+    }
+
+    public void setFillColor(Color fillColor) {
+        this.fillColor.set(fillColor);
+    }
+
+    public double getStrokeWidth() {
+        return strokeWidth.get();
+    }
+
+    public DoubleProperty strokeWidthProperty() {
+        return strokeWidth;
+    }
+
+    public void setStrokeWidth(double strokeWidth) {
+        this.strokeWidth.set(strokeWidth);
+    }
+
+    public Color getStrokeColor() {
+        return strokeColor.get();
+    }
+
+    public ObjectProperty<Color> strokeColorProperty() {
+        return strokeColor;
+    }
+
+    public void setStrokeColor(Color strokeColor) {
+        this.strokeColor.set(strokeColor);
     }
 
     public double getxStarting() {

@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -10,10 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import models.Drawing;
-import models.Line;
-import models.Rectangle;
-import models.Shape;
+import models.*;
 
 public class Controller {
     @FXML
@@ -38,6 +36,10 @@ public class Controller {
     Shape currentShape = null;
     double startingX = 0;
     double startingY = 0;
+    double offsetX = 0;
+    double offsetY = 0;
+    double offsetEndX = 0;
+    double offsetEndY = 0;
 
     @FXML
     public void initialize() {
@@ -75,6 +77,10 @@ public class Controller {
                     currentShape = new Rectangle(event.getX(), event.getY(), event.getX(), event.getY(), ColorSelection.getValue());
                     drawing.addShape(currentShape);
                     DrawingArea.getChildren().add(createViewFromShape(currentShape));
+                } else if (EllipseRadio.isSelected()) {
+                    currentShape = new Ellipse(event.getX(), event.getY(), event.getX(), event.getY(), ColorSelection.getValue());
+                    drawing.addShape(currentShape);
+                    DrawingArea.getChildren().add(createViewFromShape(currentShape));
                 }
             }
         });
@@ -82,8 +88,8 @@ public class Controller {
         DrawingArea.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (currentShape != null) {
-                    if(currentShape instanceof Line){
+                if (currentShape != null && !SelectMoveRadio.isSelected()) {
+                    if (currentShape instanceof Line) {
                         currentShape.setxEnding(event.getX());
                         currentShape.setyEnding(event.getY());
                         return;
@@ -111,12 +117,36 @@ public class Controller {
         DrawingArea.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                currentShape = null;
-                startingX = 0;
-                startingY = 0;
+                if(!SelectMoveRadio.isSelected()){
+                    currentShape = null;
+                    startingX = 0;
+                    startingY = 0;
+                    drawing.setAllShapesStylesToUnselected();
+                }
             }
         });
 
+        DrawingArea.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(SelectMoveRadio.isSelected()){
+                    currentShape = null;
+                    startingX = 0;
+                    startingY = 0;
+                    drawing.setAllShapesStylesToUnselected();
+                    System.out.println("In leaving!");
+                }
+            }
+        });
+
+        ColorSelection.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(currentShape != null){
+                    currentShape.setFillColor(ColorSelection.getValue());
+                }
+            }
+        });
     }
 
     private javafx.scene.shape.Shape createViewFromShape(Shape shape) {
@@ -127,8 +157,8 @@ public class Controller {
             line.endYProperty().bind(shape.yEndingProperty());
             line.startXProperty().bind(shape.xStartingProperty());
             line.startYProperty().bind(shape.yStartingProperty());
-            line.setStrokeWidth(3);
             line.strokeProperty().bind(shape.fillColorProperty());
+            line.strokeWidthProperty().bind(shape.strokeWidthProperty());
             view = line;
         } else if (shape instanceof Rectangle) {
             javafx.scene.shape.Rectangle rectangle = new javafx.scene.shape.Rectangle(shape.getxStarting(), shape.getyStarting(), shape.getxEnding(), shape.getyEnding());
@@ -136,11 +166,49 @@ public class Controller {
             rectangle.heightProperty().bind(((Rectangle) shape).heightProperty());
             rectangle.xProperty().bind(shape.xStartingProperty());
             rectangle.yProperty().bind(shape.yStartingProperty());
-            rectangle.setStrokeWidth(2);
-            rectangle.setStroke(Color.BLACK);
+            rectangle.strokeProperty().bind(shape.strokeColorProperty());
+            rectangle.strokeWidthProperty().bind(shape.strokeWidthProperty());
             view = rectangle;
+        } else if (shape instanceof Ellipse) {
+            javafx.scene.shape.Ellipse ellipse = new javafx.scene.shape.Ellipse(shape.getxStarting(), shape.getyStarting(), 0, 0);
+            ellipse.radiusXProperty().bind(((Ellipse) shape).widthProperty());
+            ellipse.radiusYProperty().bind(((Ellipse) shape).heightProperty());
+            ellipse.centerXProperty().bind(shape.xStartingProperty());
+            ellipse.centerYProperty().bind(shape.yStartingProperty());
+            ellipse.strokeProperty().bind(shape.strokeColorProperty());
+            ellipse.strokeWidthProperty().bind(shape.strokeWidthProperty());
+            view = ellipse;
         }
         view.fillProperty().bind(shape.fillColorProperty());
+        view.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (SelectMoveRadio.isSelected()) {
+                    currentShape = shape;
+                    shape.changeStyleForSelected();
+                    startingX = event.getX();
+                    startingY = event.getY();
+                    offsetX = startingX - shape.getxStarting();
+                    offsetY = startingY - shape.getyStarting();
+                    offsetEndX = startingX - shape.getxEnding();
+                    offsetEndY = startingY - shape.getyEnding();
+                }
+            }
+        });
+        view.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(SelectMoveRadio.isSelected()){
+                    shape.setxStarting(event.getX()-offsetX);
+                    shape.setyStarting(event.getY()-offsetY);
+                    if(currentShape instanceof Line){
+                        shape.setxEnding(event.getX()-offsetEndX);
+                        shape.setyEnding(event.getY()-offsetEndY);
+                    }
+
+                }
+            }
+        });
         return view;
     }
 }
